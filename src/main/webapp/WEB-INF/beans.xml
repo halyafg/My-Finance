@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mnc="http://www.springframework.org/schema/mvc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/data/jpa
+       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+
+   <!-- <import resource="beans-mvc.xml"/>
+
+    <import resource="beans-data.xml"/>
+
+    <import resource="beans-security.xml"/>-->
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml"/>
+        <property name="persistenceUnitName" value="Main"/>
+        <property name="jpaVendorAdapter" ref="vendorAdapter"/>
+    </bean>
+    <bean id="vendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>classpath:validation</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <security:http>
+
+        <security:intercept-url pattern="/" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/currency/**" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/category/**" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/transaction/**" access="isAuthenticated()"/>
+
+        <security:csrf disabled="true"/>
+        <security:form-login login-page="/loginPage"
+                             default-target-url="/cabinet"
+                             login-processing-url="/loginProcessing"/>
+
+        <security:logout logout-success-url="/"/>
+
+    </security:http>
+
+
+    <security:authentication-manager>
+
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
+
+        <security:authentication-provider user-service-ref="userServiceImpl">
+            <security:password-encoder ref="encoder"/>
+        </security:authentication-provider>
+
+    </security:authentication-manager>
+
+
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+
+    <jpa:repositories base-package="ua.lv.halya.dao"/>
+
+    <mnc:annotation-driven/>
+    <mvc:annotation-driven/>
+
+    <context:component-scan base-package="ua.lv.halya.*"/>
+
+    <tx:annotation-driven/>
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+</beans>
+

@@ -1,0 +1,37 @@
+
+th {
+    font-size: 17px;
+    font-weight: bold;
+    background: #5E768D;
+    border-bottom: 1px solid #fff;
+    color: #f2f2f2;
+    padding: 8px;
+}
+td {
+    background: #e8edff;
+    border-bottom: 1px solid #fff;
+    color: #669;
+    border-top: 1px solid transparent;
+    padding: 8px;
+}
+tr:hover td {background: #ccddff;}
+.table{
+    /*border: solid #25303C 2px;*/
+    width: 200px;
+    float: left;
+    margin-top: 20px;
+}
+.th{
+    color: white;
+    font-size: 17px;
+}
+.left{
+    margin-right: 25px;
+}
+.comment{
+    font-size: 10px;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+

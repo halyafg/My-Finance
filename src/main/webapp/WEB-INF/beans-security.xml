@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security.xsd" >
+
+
+    <security:http>
+
+        <security:intercept-url pattern="/" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/currency/**" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/category/**" access="isAuthenticated()"/>
+        <security:intercept-url pattern="/transaction/**" access="isAuthenticated()"/>
+
+        <security:csrf disabled="true"/>
+        <security:form-login login-page="/loginPage"
+                             default-target-url="/cabinet"
+                             login-processing-url="/loginProcessing"/>
+
+        <security:logout logout-success-url="/"/>
+
+    </security:http>
+
+
+    <security:authentication-manager>
+
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+            </security:user-service>
+        </security:authentication-provider>
+
+        <security:authentication-provider user-service-ref="userServiceImpl">
+            <security:password-encoder ref="encoder"/>
+        </security:authentication-provider>
+
+    </security:authentication-manager>
+
+
+    <bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+</beans>
